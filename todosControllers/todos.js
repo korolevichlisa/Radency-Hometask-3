@@ -12,7 +12,7 @@ class TodosController {
 
   getTodo(req, res) {
     const id = parseInt(req.params.id, 10);
-     db.map((todo) => {
+    db.map((todo) => {
       if (todo.id === id) {
         return res.status(200).send({
           success: 'true',
@@ -65,6 +65,29 @@ class TodosController {
   }
 
   
+
+  getAggregated(req,res){
+
+
+    const id =req.params.category;
+
+    let countTask = 0
+    let countIdea = 0
+    let countRandom = 0
+    db.map(note => {
+      switch (note.category){
+      case "Task": countTask +=1; break
+      case "Idea": countIdea +=1;break
+      case "Random Thought": countRandom +=1;break
+      }
+    })
+    return res.status(201).send({
+      success: 'true',
+      message: 'todo added successfully',
+      countTask,countIdea,countRandom
+    });
+
+  }
 
   
 }
