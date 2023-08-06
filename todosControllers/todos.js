@@ -64,7 +64,64 @@ class TodosController {
     });
   }
 
-  
+  updateTodo(req, res) {
+    const id = parseInt(req.params.id, 10);
+    
+    let todoFound;
+    let itemIndex;
+    db.map((todo, index) => {
+      if (todo.id === id) {
+        todoFound = todo;
+        itemIndex = index;
+      }
+    });
+
+    if (!todoFound) {
+      return res.status(404).send({
+        success: 'false',
+        message: 'todo not found',
+      });
+    }
+
+    if (!req.body.text) {
+      return res.status(400).send({
+        success: 'false',
+        message: 'title is required',
+      });
+    } else if (!req.body.textDes) {
+      return res.status(400).send({
+        success: 'false',
+        message: 'description is required',
+      });
+    }else if (!req.body.category) {
+      return res.status(400).send({
+        success: 'false',
+        message: 'description is required',
+      });
+    }
+    else if (!req.body.completed) {
+      return res.status(400).send({
+        success: 'false',
+        message: 'description is required',
+      });
+    }
+
+    const newTodo = {
+      id: todoFound.id,
+      text: req.body.text || todoFound.text,
+      textDes: req.body.textDes || todoFound.textDes,
+      category: req.body.category || todoFound.category,
+      completed:req.body.completed || todoFound.completed,
+    };
+
+    db.splice(itemIndex, 1, newTodo);
+
+    return res.status(201).send({
+      success: 'true',
+      message: 'todo added successfully',
+      newTodo,
+    });
+  }
 
   getAggregated(req,res){
 
@@ -89,7 +146,30 @@ class TodosController {
 
   }
 
-  
+  deleteTodo(req, res) {
+    const id = parseInt(req.params.id, 10);
+    let todoFound;
+    let itemIndex;
+    db.map((todo, index) => {
+      if (todo.id === id) {
+        todoFound = todo;
+        itemIndex = index;
+      }
+    });
+
+    if (!todoFound) {
+      return res.status(404).send({
+        success: 'false',
+        message: 'todo not found',
+      });
+    }
+    db.splice(itemIndex, 1);
+
+    return res.status(200).send({
+      success: 'true',
+      message: 'Todo deleted successfuly',
+    });
+  }
 }
 
 const todoController = new TodosController();
